@@ -3,34 +3,37 @@
 import { Suspense, useState, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Environment } from '@react-three/drei'
-import { MorphingCrystal, CrystalLights } from './CrystalGeometry'
+import { MorphingCrystal, CrystalLights, CrystalColors } from './CrystalGeometry'
 
 /* ─────────────────────────────────────────────
    Fixed Fullscreen 3D Canvas
 
    Stays behind scrolling content, showing the
    morphing crystal that responds to scroll progress.
+   Colors driven by theme from forge.config.ts
    ───────────────────────────────────────────── */
 
 interface ForgeCanvasProps {
   progress: number
+  crystalColors: CrystalColors
+  voidColor: string
 }
 
-function Scene({ progress }: ForgeCanvasProps) {
+function Scene({ progress, crystalColors, voidColor }: ForgeCanvasProps) {
   return (
     <>
-      <color attach="background" args={['#050505']} />
-      <fog attach="fog" args={['#050505', 6, 18]} />
+      <color attach="background" args={[voidColor]} />
+      <fog attach="fog" args={[voidColor, 6, 18]} />
 
-      <CrystalLights progress={progress} />
+      <CrystalLights progress={progress} colors={crystalColors} />
       <Environment preset="night" />
 
-      <MorphingCrystal progress={progress} />
+      <MorphingCrystal progress={progress} colors={crystalColors} />
     </>
   )
 }
 
-export function ForgeCanvas({ progress }: ForgeCanvasProps) {
+export function ForgeCanvas({ progress, crystalColors, voidColor }: ForgeCanvasProps) {
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
@@ -55,7 +58,7 @@ export function ForgeCanvas({ progress }: ForgeCanvasProps) {
         dpr={isMobile ? 1 : [1, 1.5]}
       >
         <Suspense fallback={null}>
-          <Scene progress={progress} />
+          <Scene progress={progress} crystalColors={crystalColors} voidColor={voidColor} />
         </Suspense>
       </Canvas>
 

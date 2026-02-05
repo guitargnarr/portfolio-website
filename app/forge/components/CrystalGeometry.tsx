@@ -17,17 +17,31 @@ import type { Mesh, InstancedMesh as InstancedMeshType } from 'three'
    0.4-0.6: Shaping - Geometry defined
    0.6-0.8: Refinement - Transmission material
    0.8-1.0: Radiance - Full glow, perfect form
+
+   Colors driven by theme from forge.config.ts
    ───────────────────────────────────────────── */
+
+export interface CrystalColors {
+  baseColor: string
+  glowColor: string
+  particleColorStart: string
+  particleColorEnd: string
+}
 
 interface CrystalGeometryProps {
   progress: number
+  colors: CrystalColors
 }
 
-function CrystalParticles({ progress }: CrystalGeometryProps) {
+function CrystalParticles({ progress, colors }: CrystalGeometryProps) {
   const meshRef = useRef<InstancedMeshType>(null)
   const count = 200
   const dummy = useMemo(() => new THREE.Object3D(), [])
   const smoothProgress = useRef(0)
+
+  // Parse colors from hex to RGB components
+  const startColor = useMemo(() => new THREE.Color(colors.particleColorStart), [colors.particleColorStart])
+  const endColor = useMemo(() => new THREE.Color(colors.particleColorEnd), [colors.particleColorEnd])
 
   // Random positions for scattered state
   const scatteredPositions = useMemo(() => {
@@ -116,25 +130,23 @@ function CrystalParticles({ progress }: CrystalGeometryProps) {
 
     // Update material color/emissive based on progress
     const mat = meshRef.current.material as THREE.MeshStandardMaterial
-    // From gray (chaos) to amber (formed) to bright amber (radiant)
+    // Interpolate from start color (chaos) to end color (formed)
     const colorProgress = Math.min(1, p * 1.5)
-    const r = 0.3 + colorProgress * 0.48 // 0.3 -> 0.78
-    const g = 0.3 + colorProgress * 0.28 // 0.3 -> 0.58
-    const b = 0.35 - colorProgress * 0.1 // 0.35 -> 0.25
-    mat.color.setRGB(r, g, b)
-    mat.emissive.setRGB(r, g, b)
+    const currentColor = new THREE.Color().lerpColors(startColor, endColor, colorProgress)
+    mat.color.copy(currentColor)
+    mat.emissive.copy(currentColor)
     mat.emissiveIntensity = 0.1 + p * 0.8
   })
 
   return (
     <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
       <sphereGeometry args={[1, 8, 8]} />
-      <meshStandardMaterial color="#4a4540" emissive="#4a4540" emissiveIntensity={0.1} />
+      <meshStandardMaterial color={colors.particleColorStart} emissive={colors.particleColorStart} emissiveIntensity={0.1} />
     </instancedMesh>
   )
 }
 
-function CrystalCore({ progress }: CrystalGeometryProps) {
+function CrystalCore({ progress, colors }: CrystalGeometryProps) {
   const meshRef = useRef<Mesh>(null)
   const smoothProgress = useRef(0)
 
@@ -174,7 +186,7 @@ function CrystalCore({ progress }: CrystalGeometryProps) {
           distortionScale={0.3}
           temporalDistortion={0.1}
           ior={1.5}
-          color="#c8956c"
+          color={colors.baseColor}
           roughness={0.15 - progress * 0.1}
           transmission={0.9 + progress * 0.1}
           transparent
@@ -185,7 +197,7 @@ function CrystalCore({ progress }: CrystalGeometryProps) {
   )
 }
 
-function CrystalGlow({ progress }: CrystalGeometryProps) {
+function CrystalGlow({ progress, colors }: CrystalGeometryProps) {
   const meshRef = useRef<Mesh>(null)
   const smoothProgress = useRef(0)
 
@@ -213,22 +225,22 @@ function CrystalGlow({ progress }: CrystalGeometryProps) {
   return (
     <mesh ref={meshRef}>
       <sphereGeometry args={[1, 32, 32]} />
-      <meshBasicMaterial color="#c8956c" transparent opacity={0} />
+      <meshBasicMaterial color={colors.glowColor} transparent opacity={0} />
     </mesh>
   )
 }
 
-export function MorphingCrystal({ progress }: CrystalGeometryProps) {
+export function MorphingCrystal({ progress, colors }: CrystalGeometryProps) {
   return (
     <group>
-      <CrystalParticles progress={progress} />
-      <CrystalCore progress={progress} />
-      <CrystalGlow progress={progress} />
+      <CrystalParticles progress={progress} colors={colors} />
+      <CrystalCore progress={progress} colors={colors} />
+      <CrystalGlow progress={progress} colors={colors} />
     </group>
   )
 }
 
-export function CrystalLights({ progress }: CrystalGeometryProps) {
+export function CrystalLights({ progress, colors }: CrystalGeometryProps) {
   const spotRef = useRef<THREE.SpotLight>(null)
   const smoothProgress = useRef(0)
 
@@ -251,16 +263,16 @@ export function CrystalLights({ progress }: CrystalGeometryProps) {
         angle={0.3}
         penumbra={1}
         intensity={2}
-        color="#c8956c"
+        color={colors.baseColor}
       />
       <spotLight
         position={[-5, -2, 3]}
         angle={0.4}
         penumbra={1}
         intensity={0.5 + progress * 0.8}
-        color="#4a3f35"
+        color={colors.particleColorStart}
       />
-      <pointLight position={[0, 3, 0]} intensity={0.2 + progress * 0.6} color="#e8b08a" />
+      <pointLight position={[0, 3, 0]} intensity={0.2 + progress * 0.6} color={colors.glowColor} />
     </>
   )
 }

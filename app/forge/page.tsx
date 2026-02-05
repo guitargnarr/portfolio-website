@@ -12,7 +12,7 @@ import { Section3Shaping } from './components/Section3Shaping'
 import { Section4Refinement } from './components/Section4Refinement'
 import { Section5Radiance } from './components/Section5Radiance'
 import { ThemeSwitcher } from './components/ThemeSwitcher'
-import { ForgeThemeProvider } from './config/ForgeThemeProvider'
+import { ForgeThemeProvider, useForgeTheme } from './config/ForgeThemeProvider'
 import { forgeConfig } from './config/forge.config'
 
 /* ─────────────────────────────────────────────
@@ -40,6 +40,7 @@ const ForgeCanvas = dynamic(
 function ForgePageContent() {
   const [scrollProgress, setScrollProgress] = useState(0)
   const [currentSection, setCurrentSection] = useState(0)
+  const { theme } = useForgeTheme()
 
   // Track scroll progress (0-1)
   useEffect(() => {
@@ -101,7 +102,11 @@ function ForgePageContent() {
     <ToastProvider>
       {/* Fixed 3D canvas in background */}
       <Suspense fallback={null}>
-        <ForgeCanvas progress={scrollProgress} />
+        <ForgeCanvas
+          progress={scrollProgress}
+          crystalColors={theme.crystal}
+          voidColor={theme.colors.void}
+        />
       </Suspense>
 
       {/* Floating ambient particles */}
