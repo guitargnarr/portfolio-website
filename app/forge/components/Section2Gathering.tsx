@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { AnimateIn } from '@/app/components/AnimateIn'
 import { Check } from 'lucide-react'
+import { forgeConfig } from '../config/forge.config'
 
 /* ─────────────────────────────────────────────
    Section 2: GATHERING (20-40%)
@@ -12,32 +13,16 @@ import { Check } from 'lucide-react'
    - Multi-step progress indicator
    - Selection cards
    - Form preview
-   ───────────────────────────────────────────── */
 
-const services = [
-  {
-    id: 'landing',
-    title: 'Landing Page',
-    description: 'Single-page with smooth scroll, animations, and contact form.',
-    features: ['Responsive design', 'Staggered animations', 'Contact form'],
-  },
-  {
-    id: 'booking',
-    title: 'Booking System',
-    description: 'Multi-page with scheduling, calendar integration, and payments.',
-    features: ['3-step wizard', 'Real-time slots', 'Validation'],
-  },
-  {
-    id: 'ecommerce',
-    title: 'E-commerce',
-    description: 'Full shop with cart, search, filters, and checkout flow.',
-    features: ['Product grid', 'Cart system', 'Analytics'],
-  },
-]
+   Content driven by forge.config.ts
+   ───────────────────────────────────────────── */
 
 export function Section2Gathering() {
   const [step, setStep] = useState(1)
   const [selectedService, setSelectedService] = useState<string | null>(null)
+
+  const { services, sections } = forgeConfig
+  const section = sections[1]
 
   const steps = [
     { num: 1, label: 'Service' },
@@ -47,7 +32,7 @@ export function Section2Gathering() {
 
   return (
     <section
-      id="section-2"
+      id={section.id}
       style={{
         minHeight: '100vh',
         display: 'flex',
@@ -74,7 +59,7 @@ export function Section2Gathering() {
                 color: 'var(--color-text-muted)',
               }}
             >
-              02 &mdash; Gathering
+              {section.number} &mdash; {section.label}
             </span>
             <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--color-border)' }} />
           </div>
@@ -91,7 +76,7 @@ export function Section2Gathering() {
               marginBottom: '8px',
             }}
           >
-            Choose your <em style={{ color: 'var(--color-accent)' }}>path</em>
+            {section.title} <em style={{ color: 'var(--color-accent)' }}>{section.titleAccent}</em>
           </h2>
           <p
             style={{
@@ -102,7 +87,7 @@ export function Section2Gathering() {
               maxWidth: '500px',
             }}
           >
-            Elements gather with purpose. Select the foundation for your project.
+            {section.subtitle}
           </p>
         </AnimateIn>
 

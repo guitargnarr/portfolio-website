@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { AnimateIn } from '@/app/components/AnimateIn'
-import { Send, Check, AlertCircle, Github, Linkedin, Mail } from 'lucide-react'
+import { Send, Check, AlertCircle, Github, Linkedin, Mail, Twitter, Instagram, Dribbble } from 'lucide-react'
 import { useToast } from './ToastProvider'
+import { forgeConfig, ForgeSocialLink } from '../config/forge.config'
 
 /* ─────────────────────────────────────────────
    Section 5: RADIANCE (80-100%)
@@ -14,7 +15,18 @@ import { useToast } from './ToastProvider'
    - Glass-morphism cards
    - Staggered animations
    - Social links
+
+   Content driven by forge.config.ts
    ───────────────────────────────────────────── */
+
+const iconMap = {
+  github: Github,
+  linkedin: Linkedin,
+  mail: Mail,
+  twitter: Twitter,
+  instagram: Instagram,
+  dribbble: Dribbble,
+}
 
 interface FormData {
   name: string
@@ -35,6 +47,9 @@ export function Section5Radiance() {
   const [touched, setTouched] = useState<Record<string, boolean>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
+
+  const { contact, socialLinks, brand, sections } = forgeConfig
+  const section = sections[4]
 
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 
@@ -83,18 +98,12 @@ export function Section5Radiance() {
 
     setIsSubmitting(false)
     setIsSubmitted(true)
-    addToast('success', 'Message sent successfully!')
+    addToast('success', contact.successTitle)
   }
-
-  const socialLinks = [
-    { icon: Github, href: 'https://github.com', label: 'GitHub' },
-    { icon: Linkedin, href: 'https://linkedin.com', label: 'LinkedIn' },
-    { icon: Mail, href: 'mailto:hello@example.com', label: 'Email' },
-  ]
 
   return (
     <section
-      id="section-5"
+      id={section.id}
       style={{
         minHeight: '100vh',
         display: 'flex',
@@ -116,7 +125,7 @@ export function Section5Radiance() {
                 color: 'var(--color-text-muted)',
               }}
             >
-              05 &mdash; Radiance
+              {section.number} &mdash; {section.label}
             </span>
             <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--color-border)' }} />
           </div>
@@ -134,7 +143,7 @@ export function Section5Radiance() {
               textAlign: 'center',
             }}
           >
-            Your vision, <em style={{ color: 'var(--color-accent)' }}>realized</em>
+            {contact.heading} <em style={{ color: 'var(--color-accent)' }}>{contact.headingAccent}</em>
           </h2>
           <p
             style={{
@@ -147,8 +156,7 @@ export function Section5Radiance() {
               margin: '0 auto 48px',
             }}
           >
-            The crystal is complete. It radiates with all the patterns you have explored.
-            Now, let us create something together.
+            {contact.subtitle}
           </p>
         </AnimateIn>
 
@@ -186,7 +194,7 @@ export function Section5Radiance() {
                     marginBottom: '12px',
                   }}
                 >
-                  Message Sent
+                  {contact.successTitle}
                 </h3>
                 <p
                   style={{
@@ -195,7 +203,7 @@ export function Section5Radiance() {
                     color: 'var(--color-text-secondary)',
                   }}
                 >
-                  Thank you for reaching out. We will be in touch soon.
+                  {contact.successMessage}
                 </p>
               </div>
             ) : (
@@ -376,10 +384,10 @@ export function Section5Radiance() {
                   }}
                 >
                   {isSubmitting ? (
-                    'Sending...'
+                    contact.submittingLabel
                   ) : (
                     <>
-                      Send Message <Send size={16} />
+                      {contact.submitLabel} <Send size={16} />
                     </>
                   )}
                 </button>
@@ -398,7 +406,7 @@ export function Section5Radiance() {
             }}
           >
             {socialLinks.map((link) => {
-              const Icon = link.icon
+              const Icon = iconMap[link.icon]
               return (
                 <a
                   key={link.label}
@@ -446,7 +454,7 @@ export function Section5Radiance() {
               marginTop: '48px',
             }}
           >
-            Built with React, Three.js, Framer Motion, and Tailwind CSS.
+            {brand.footerText}
           </p>
         </AnimateIn>
       </div>

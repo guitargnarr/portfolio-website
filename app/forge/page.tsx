@@ -11,15 +11,21 @@ import { Section2Gathering } from './components/Section2Gathering'
 import { Section3Shaping } from './components/Section3Shaping'
 import { Section4Refinement } from './components/Section4Refinement'
 import { Section5Radiance } from './components/Section5Radiance'
+import { ThemeSwitcher } from './components/ThemeSwitcher'
+import { ForgeThemeProvider } from './config/ForgeThemeProvider'
+import { forgeConfig } from './config/forge.config'
 
 /* ─────────────────────────────────────────────
    The Forge: Elite Frontend Masterclass
+   WHITE-LABEL EDITION
 
    A single-page experience with one evolving 3D
    crystal that morphs through 5 stages as the
    user scrolls. Each stage demonstrates a
-   different tier pattern while maintaining the
-   Architectural Noir aesthetic.
+   different tier pattern.
+
+   Configuration: ./config/forge.config.ts
+   Theme Provider: ./config/ForgeThemeProvider.tsx
 
    Metaphor: "From chaos to clarity. Watch ideas
    take form."
@@ -31,7 +37,7 @@ const ForgeCanvas = dynamic(
   { ssr: false }
 )
 
-export default function ForgePage() {
+function ForgePageContent() {
   const [scrollProgress, setScrollProgress] = useState(0)
   const [currentSection, setCurrentSection] = useState(0)
 
@@ -49,7 +55,7 @@ export default function ForgePage() {
 
   // Track which section is visible
   useEffect(() => {
-    const sectionIds = ['section-1', 'section-2', 'section-3', 'section-4', 'section-5']
+    const sectionIds = forgeConfig.sections.map((s) => s.id)
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -72,9 +78,9 @@ export default function ForgePage() {
 
   // Keyboard navigation
   useEffect(() => {
-    const sectionIds = ['section-1', 'section-2', 'section-3', 'section-4', 'section-5']
+    const sectionIds = forgeConfig.sections.map((s) => s.id)
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowDown' && currentSection < 4) {
+      if (e.key === 'ArrowDown' && currentSection < sectionIds.length - 1) {
         e.preventDefault()
         document.getElementById(sectionIds[currentSection + 1])?.scrollIntoView({ behavior: 'smooth' })
       }
@@ -104,6 +110,9 @@ export default function ForgePage() {
       {/* Side navigation dots */}
       <ForgeNav currentSection={currentSection} />
 
+      {/* Theme switcher */}
+      <ThemeSwitcher />
+
       {/* Scrollable content sections */}
       <main style={{ position: 'relative', zIndex: 1 }}>
         <Section1Entropy onNavigate={handleNavigate} />
@@ -124,5 +133,13 @@ export default function ForgePage() {
       {/* Noise overlay */}
       <div className="noise-overlay" aria-hidden="true" />
     </ToastProvider>
+  )
+}
+
+export default function ForgePage() {
+  return (
+    <ForgeThemeProvider>
+      <ForgePageContent />
+    </ForgeThemeProvider>
   )
 }

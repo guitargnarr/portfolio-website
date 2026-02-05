@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import { AnimateIn } from '@/app/components/AnimateIn'
 import { Search, X } from 'lucide-react'
+import { forgeConfig } from '../config/forge.config'
 
 /* ─────────────────────────────────────────────
    Section 3: SHAPING (40-60%)
@@ -12,25 +13,16 @@ import { Search, X } from 'lucide-react'
    - Search with real-time filtering
    - Category filter pills
    - Product/item grid
+
+   Content driven by forge.config.ts
    ───────────────────────────────────────────── */
-
-const materials = [
-  { id: 1, name: 'React', category: 'Framework', icon: '⚛️', description: 'Component-based UI library' },
-  { id: 2, name: 'TypeScript', category: 'Language', icon: '📘', description: 'Typed JavaScript at scale' },
-  { id: 3, name: 'Tailwind', category: 'Styling', icon: '🎨', description: 'Utility-first CSS framework' },
-  { id: 4, name: 'Framer Motion', category: 'Animation', icon: '✨', description: 'Production-ready animations' },
-  { id: 5, name: 'Three.js', category: 'Animation', icon: '🔮', description: '3D graphics for the web' },
-  { id: 6, name: 'Next.js', category: 'Framework', icon: '▲', description: 'React framework for production' },
-  { id: 7, name: 'PostgreSQL', category: 'Database', icon: '🗄️', description: 'Relational database system' },
-  { id: 8, name: 'Redis', category: 'Database', icon: '⚡', description: 'In-memory data structure store' },
-  { id: 9, name: 'Vercel', category: 'Platform', icon: '🚀', description: 'Deploy at the edge' },
-]
-
-const categories = ['All', 'Framework', 'Language', 'Styling', 'Animation', 'Database', 'Platform']
 
 export function Section3Shaping() {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState('All')
+
+  const { materials, materialCategories, sections } = forgeConfig
+  const section = sections[2]
 
   const filteredMaterials = useMemo(() => {
     return materials.filter((m) => {
@@ -41,11 +33,11 @@ export function Section3Shaping() {
         m.description.toLowerCase().includes(searchQuery.toLowerCase())
       return matchesCategory && matchesSearch
     })
-  }, [searchQuery, activeCategory])
+  }, [searchQuery, activeCategory, materials])
 
   return (
     <section
-      id="section-3"
+      id={section.id}
       style={{
         minHeight: '100vh',
         display: 'flex',
@@ -67,7 +59,7 @@ export function Section3Shaping() {
                 color: 'var(--color-text-muted)',
               }}
             >
-              03 &mdash; Shaping
+              {section.number} &mdash; {section.label}
             </span>
             <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--color-border)' }} />
           </div>
@@ -84,7 +76,7 @@ export function Section3Shaping() {
               marginBottom: '8px',
             }}
           >
-            Select your <em style={{ color: 'var(--color-accent)' }}>materials</em>
+            {section.title} <em style={{ color: 'var(--color-accent)' }}>{section.titleAccent}</em>
           </h2>
           <p
             style={{
@@ -95,7 +87,7 @@ export function Section3Shaping() {
               maxWidth: '500px',
             }}
           >
-            The crystal takes form. Search and filter the tools that define your stack.
+            {section.subtitle}
           </p>
         </AnimateIn>
 
@@ -177,7 +169,7 @@ export function Section3Shaping() {
               marginBottom: '32px',
             }}
           >
-            {categories.map((cat) => {
+            {materialCategories.map((cat) => {
               const isActive = activeCategory === cat
               return (
                 <button

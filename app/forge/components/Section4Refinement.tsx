@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { AnimateIn } from '@/app/components/AnimateIn'
-import { TrendingUp, Users, Zap, Target } from 'lucide-react'
 import { useToast } from './ToastProvider'
+import { forgeConfig } from '../config/forge.config'
 
 /* ─────────────────────────────────────────────
    Section 4: REFINEMENT (60-80%)
@@ -14,6 +14,8 @@ import { useToast } from './ToastProvider'
    - Mini sparkline charts
    - Toast notifications
    - Dashboard stat cards
+
+   Content driven by forge.config.ts
    ───────────────────────────────────────────── */
 
 interface ProgressRingProps {
@@ -148,43 +150,10 @@ function Sparkline({ data, color = 'var(--color-accent)' }: SparklineProps) {
   )
 }
 
-const stats = [
-  {
-    label: 'Conversion',
-    value: '94%',
-    progress: 94,
-    icon: Target,
-    sparkline: [30, 45, 55, 50, 70, 85, 94],
-    trend: '+12%',
-  },
-  {
-    label: 'Performance',
-    value: '98',
-    progress: 98,
-    icon: Zap,
-    sparkline: [80, 85, 82, 90, 95, 97, 98],
-    trend: '+5%',
-  },
-  {
-    label: 'Engagement',
-    value: '4.8k',
-    progress: 85,
-    icon: Users,
-    sparkline: [1200, 1800, 2200, 3000, 3500, 4200, 4800],
-    trend: '+24%',
-  },
-  {
-    label: 'Growth',
-    value: '127%',
-    progress: 100,
-    icon: TrendingUp,
-    sparkline: [20, 35, 55, 70, 90, 110, 127],
-    trend: '+127%',
-  },
-]
-
 export function Section4Refinement() {
   const { addToast } = useToast()
+  const { metrics, sections } = forgeConfig
+  const section = sections[3]
 
   const handleShowToast = (type: 'success' | 'error' | 'info') => {
     const messages = {
@@ -197,7 +166,7 @@ export function Section4Refinement() {
 
   return (
     <section
-      id="section-4"
+      id={section.id}
       style={{
         minHeight: '100vh',
         display: 'flex',
@@ -219,7 +188,7 @@ export function Section4Refinement() {
                 color: 'var(--color-text-muted)',
               }}
             >
-              04 &mdash; Refinement
+              {section.number} &mdash; {section.label}
             </span>
             <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--color-border)' }} />
           </div>
@@ -236,7 +205,7 @@ export function Section4Refinement() {
               marginBottom: '8px',
             }}
           >
-            Polish the <em style={{ color: 'var(--color-accent)' }}>facets</em>
+            {section.title} <em style={{ color: 'var(--color-accent)' }}>{section.titleAccent}</em>
           </h2>
           <p
             style={{
@@ -247,7 +216,7 @@ export function Section4Refinement() {
               maxWidth: '500px',
             }}
           >
-            Every edge sharpens. Track metrics, visualize progress, receive feedback.
+            {section.subtitle}
           </p>
         </AnimateIn>
 
@@ -261,84 +230,84 @@ export function Section4Refinement() {
               marginBottom: '40px',
             }}
           >
-            {stats.map((stat, i) => {
-              const Icon = stat.icon
-              return (
+            {metrics.map((metric, i) => (
+              <div
+                key={metric.label}
+                className="card-glass"
+                style={{
+                  padding: '24px',
+                  borderRadius: '16px',
+                  animation: `fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${0.1 + i * 0.1}s both`,
+                }}
+              >
                 <div
-                  key={stat.label}
-                  className="card-glass"
                   style={{
-                    padding: '24px',
-                    borderRadius: '16px',
-                    animation: `fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${0.1 + i * 0.1}s both`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '16px',
                   }}
                 >
                   <div
                     style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '10px',
+                      backgroundColor: 'var(--color-accent-glow)',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'space-between',
-                      marginBottom: '16px',
+                      justifyContent: 'center',
+                      fontFamily: 'var(--font-display)',
+                      fontSize: '18px',
+                      color: 'var(--color-accent)',
                     }}
                   >
-                    <div
-                      style={{
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '10px',
-                        backgroundColor: 'var(--color-accent-glow)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <Icon size={20} color="var(--color-accent)" />
-                    </div>
-                    <span
-                      style={{
-                        fontFamily: 'var(--font-body)',
-                        fontSize: '12px',
-                        fontWeight: 500,
-                        color: 'var(--color-accent)',
-                        backgroundColor: 'var(--color-accent-glow)',
-                        padding: '4px 8px',
-                        borderRadius: '100px',
-                      }}
-                    >
-                      {stat.trend}
-                    </span>
+                    {metric.value}
                   </div>
-
-                  <p
+                  <span
                     style={{
                       fontFamily: 'var(--font-body)',
-                      fontSize: '11px',
-                      letterSpacing: '0.1em',
-                      textTransform: 'uppercase',
-                      color: 'var(--color-text-muted)',
-                      marginBottom: '4px',
+                      fontSize: '12px',
+                      fontWeight: 500,
+                      color: metric.trendUp ? 'var(--color-accent)' : '#ef4444',
+                      backgroundColor: 'var(--color-accent-glow)',
+                      padding: '4px 8px',
+                      borderRadius: '100px',
                     }}
                   >
-                    {stat.label}
-                  </p>
-
-                  <p
-                    style={{
-                      fontFamily: 'var(--font-display)',
-                      fontSize: '28px',
-                      fontWeight: 400,
-                      color: 'var(--color-text-primary)',
-                      marginBottom: '12px',
-                    }}
-                  >
-                    {stat.value}
-                  </p>
-
-                  {/* Mini Sparkline - Tier 4 pattern */}
-                  <Sparkline data={stat.sparkline} />
+                    {metric.trend}
+                  </span>
                 </div>
-              )
-            })}
+
+                <p
+                  style={{
+                    fontFamily: 'var(--font-body)',
+                    fontSize: '11px',
+                    letterSpacing: '0.1em',
+                    textTransform: 'uppercase',
+                    color: 'var(--color-text-muted)',
+                    marginBottom: '4px',
+                  }}
+                >
+                  {metric.label}
+                </p>
+
+                <p
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '28px',
+                    fontWeight: 400,
+                    color: 'var(--color-text-primary)',
+                    marginBottom: '12px',
+                  }}
+                >
+                  {metric.value}
+                </p>
+
+                {/* Mini Sparkline - Tier 4 pattern */}
+                <Sparkline data={metric.data} />
+              </div>
+            ))}
           </div>
         </AnimateIn>
 
@@ -372,10 +341,13 @@ export function Section4Refinement() {
                 gap: '24px',
               }}
             >
-              <ProgressRing progress={94} label="Design" />
-              <ProgressRing progress={88} label="Code" />
-              <ProgressRing progress={76} label="Test" />
-              <ProgressRing progress={100} label="Deploy" />
+              {metrics.map((metric) => (
+                <ProgressRing
+                  key={metric.label}
+                  progress={parseInt(metric.value) || 0}
+                  label={metric.label}
+                />
+              ))}
             </div>
           </div>
         </AnimateIn>

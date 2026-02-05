@@ -1,27 +1,23 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { forgeConfig } from '../config/forge.config'
 
 /* ─────────────────────────────────────────────
-   5-Dot Side Navigation
+   5-Dot Side Navigation (Config-Driven)
 
    Fixed navigation showing current section
    with smooth transitions between stages.
+   Labels come from forge.config.ts
    ───────────────────────────────────────────── */
-
-const sections = [
-  { id: 'section-1', label: 'Entropy', stage: 'Scattered' },
-  { id: 'section-2', label: 'Gathering', stage: 'Coalescing' },
-  { id: 'section-3', label: 'Shaping', stage: 'Forming' },
-  { id: 'section-4', label: 'Refinement', stage: 'Polishing' },
-  { id: 'section-5', label: 'Radiance', stage: 'Complete' },
-]
 
 interface ForgeNavProps {
   currentSection: number
 }
 
 export function ForgeNav({ currentSection }: ForgeNavProps) {
+  const sections = forgeConfig.sections
+
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
   }

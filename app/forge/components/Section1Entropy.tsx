@@ -1,6 +1,7 @@
 'use client'
 
 import { AnimateIn } from '@/app/components/AnimateIn'
+import { forgeConfig } from '../config/forge.config'
 
 /* ─────────────────────────────────────────────
    Section 1: ENTROPY (0-20%)
@@ -10,23 +11,21 @@ import { AnimateIn } from '@/app/components/AnimateIn'
    - Hero headline with staggered entrance
    - Smooth scroll navigation
    - Parallax text effect
+
+   Content driven by forge.config.ts
    ───────────────────────────────────────────── */
 
 interface Section1Props {
   onNavigate: (sectionId: string) => void
 }
 
-const navItems = [
-  { id: 'section-2', label: 'Gathering' },
-  { id: 'section-3', label: 'Shaping' },
-  { id: 'section-4', label: 'Refinement' },
-  { id: 'section-5', label: 'Radiance' },
-]
-
 export function Section1Entropy({ onNavigate }: Section1Props) {
+  const { brand, navItems, sections } = forgeConfig
+  const section = sections[0]
+
   return (
     <section
-      id="section-1"
+      id={section.id}
       style={{
         minHeight: '100vh',
         display: 'flex',
@@ -50,7 +49,7 @@ export function Section1Entropy({ onNavigate }: Section1Props) {
             marginBottom: '24px',
           }}
         >
-          Elite Frontend Masterclass
+          {brand.eyebrow}
         </p>
       </AnimateIn>
 
@@ -67,7 +66,7 @@ export function Section1Entropy({ onNavigate }: Section1Props) {
             marginBottom: '8px',
           }}
         >
-          The Forge
+          {brand.name}
         </h1>
       </AnimateIn>
 
@@ -83,8 +82,8 @@ export function Section1Entropy({ onNavigate }: Section1Props) {
             marginBottom: '16px',
           }}
         >
-          From chaos to{' '}
-          <em style={{ color: 'var(--color-accent)' }}>clarity</em>
+          {section.subtitle}{' '}
+          <em style={{ color: 'var(--color-accent)' }}>{section.titleAccent}</em>
         </p>
       </AnimateIn>
 
@@ -100,8 +99,7 @@ export function Section1Entropy({ onNavigate }: Section1Props) {
             marginBottom: '48px',
           }}
         >
-          Watch a crystal form as you scroll. Five stages.
-          Five tier patterns. One continuous transformation.
+          {brand.description}
         </p>
       </AnimateIn>
 
