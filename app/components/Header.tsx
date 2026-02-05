@@ -27,8 +27,8 @@ export function Header() {
 
   const navItems = [
     { label: 'Work', href: '#work' },
-    { label: 'How It Works', href: '#process' },
-    { label: 'Pricing', href: '#pricing' },
+    { label: 'Method', href: '#method' },
+    { label: 'Documents', href: '#documents' },
     { label: 'Contact', href: '#contact' },
   ]
 
@@ -71,7 +71,7 @@ export function Header() {
             textDecoration: 'none',
           }}
         >
-          Project Lavos<span style={{ color: 'var(--color-accent)' }}>.</span>
+          M. Scott
         </a>
 
         {/* Desktop Nav */}
@@ -102,7 +102,7 @@ export function Header() {
             onClick={(e) => handleNavClick(e, '#contact')}
             className="cta-button"
           >
-            Get a Free Quote
+            Reach Out
           </a>
         </nav>
 
@@ -162,7 +162,7 @@ export function Header() {
           className="cta-button"
           style={{ marginTop: '16px' }}
         >
-          Get a Free Quote
+          Reach Out
         </a>
       </div>
     </>

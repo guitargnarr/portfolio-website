@@ -108,7 +108,7 @@ export function ContactForm() {
           color: 'var(--color-text-primary)',
           marginBottom: '12px',
         }}>
-          Let&apos;s <span style={{ fontStyle: 'italic', color: 'var(--color-accent)' }}>talk</span>
+          If you recognize the work, <span style={{ fontStyle: 'italic', color: 'var(--color-accent)' }}>reach out</span>
         </h2>
       </AnimateIn>
 
@@ -120,7 +120,7 @@ export function ContactForm() {
           color: 'var(--color-text-secondary)',
           marginBottom: '40px',
         }}>
-          No contracts. No commitments. Just a quick conversation about what you need.
+          If you need convincing, I&apos;m not for you.
         </p>
       </AnimateIn>
 

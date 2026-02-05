@@ -59,6 +59,11 @@
   --color-accent: #c8956c;
   --color-accent-bright: #e8b08a;
   --color-accent-glow: rgba(200, 149, 108, 0.15);
+  --doc-engineering: #c8956c;
+  --doc-analysis: #14b8a6;
+  --doc-proposal: #2a4a7f;
+  --doc-casestudy: #f5f0eb;
+  --doc-research: #64748b;
   --font-display: 'Instrument Serif', Georgia, serif;
   --font-body: 'DM Sans', system-ui, sans-serif;
   --radius: 0.625rem;
@@ -449,6 +454,16 @@ body {
 @media (max-width: 480px) {
   .portfolio-grid {
     grid-template-columns: 1fr;
+  }
+
+  .method-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 768px) and (min-width: 481px) {
+  .method-grid {
+    grid-template-columns: 1fr !important;
   }
 }
 

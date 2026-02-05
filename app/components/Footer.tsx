@@ -32,7 +32,7 @@ export function Footer() {
               color: 'var(--color-text-primary)',
             }}
           >
-            Project Lavos<span style={{ color: 'var(--color-accent)' }}>.</span>
+            M. Scott
           </span>
           <span
             style={{
@@ -42,7 +42,7 @@ export function Footer() {
               color: 'var(--color-text-muted)',
             }}
           >
-            Louisville, KY &mdash; Web Design for Local Businesses
+            Louisville, KY &mdash; Systems, Software, Proof
           </span>
         </div>
 

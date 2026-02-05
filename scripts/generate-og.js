@@ -1,165 +1,81 @@
-const { createCanvas, registerFont } = require('canvas');
-const fs = require('fs');
-const path = require('path');
+const { createCanvas } = require('canvas')
+const fs = require('fs')
+const path = require('path')
 
-const WIDTH = 1200;
-const HEIGHT = 630;
+const W = 1200
+const H = 630
 
-const canvas = createCanvas(WIDTH, HEIGHT);
-const ctx = canvas.getContext('2d');
+const canvas = createCanvas(W, H)
+const ctx = canvas.getContext('2d')
 
-// === BACKGROUND: Deep void with subtle radial gradient ===
-const bgGrad = ctx.createRadialGradient(WIDTH * 0.5, HEIGHT * 0.45, 0, WIDTH * 0.5, HEIGHT * 0.45, WIDTH * 0.7);
-bgGrad.addColorStop(0, '#0f0d0a');
-bgGrad.addColorStop(0.5, '#080706');
-bgGrad.addColorStop(1, '#050505');
-ctx.fillStyle = bgGrad;
-ctx.fillRect(0, 0, WIDTH, HEIGHT);
+// Background
+ctx.fillStyle = '#050505'
+ctx.fillRect(0, 0, W, H)
 
-// === DECORATIVE: Amber glow orb (simulates the 3D light) ===
-const glowGrad = ctx.createRadialGradient(WIDTH * 0.72, HEIGHT * 0.5, 0, WIDTH * 0.72, HEIGHT * 0.5, 280);
-glowGrad.addColorStop(0, 'rgba(200, 149, 108, 0.15)');
-glowGrad.addColorStop(0.4, 'rgba(200, 149, 108, 0.06)');
-glowGrad.addColorStop(1, 'rgba(200, 149, 108, 0)');
-ctx.fillStyle = glowGrad;
-ctx.fillRect(0, 0, WIDTH, HEIGHT);
+// Subtle noise texture simulation
+ctx.globalAlpha = 0.03
+for (let x = 0; x < W; x += 4) {
+  for (let y = 0; y < H; y += 4) {
+    if (Math.random() > 0.5) {
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(x, y, 1, 1)
+    }
+  }
+}
+ctx.globalAlpha = 1
 
-// === DECORATIVE: Secondary subtle glow top-left ===
-const glow2 = ctx.createRadialGradient(WIDTH * 0.15, HEIGHT * 0.2, 0, WIDTH * 0.15, HEIGHT * 0.2, 200);
-glow2.addColorStop(0, 'rgba(200, 149, 108, 0.05)');
-glow2.addColorStop(1, 'rgba(200, 149, 108, 0)');
-ctx.fillStyle = glow2;
-ctx.fillRect(0, 0, WIDTH, HEIGHT);
-
-// === DECORATIVE: Geometric wireframe ring (right side) ===
-ctx.strokeStyle = 'rgba(200, 149, 108, 0.12)';
-ctx.lineWidth = 1;
-
-// Draw elliptical rings to suggest the torus knot
-for (let i = 0; i < 5; i++) {
-  ctx.beginPath();
-  const cx = WIDTH * 0.73;
-  const cy = HEIGHT * 0.48;
-  const rx = 100 + i * 30;
-  const ry = 80 + i * 20;
-  const angle = (i * 15 * Math.PI) / 180;
-
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.rotate(angle);
-  ctx.beginPath();
-  ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.restore();
+// Concentric rings (Mobius strip suggestion)
+const cx = W * 0.72
+const cy = H * 0.48
+for (let r = 60; r <= 200; r += 20) {
+  ctx.beginPath()
+  ctx.arc(cx, cy, r, 0, Math.PI * 2)
+  ctx.strokeStyle = 'rgba(200, 149, 108, ' + (0.04 + (200 - r) * 0.0004) + ')'
+  ctx.lineWidth = 1
+  ctx.stroke()
 }
 
-// Inner bright ring
-ctx.strokeStyle = 'rgba(200, 149, 108, 0.25)';
-ctx.lineWidth = 1.5;
-ctx.beginPath();
-ctx.ellipse(WIDTH * 0.73, HEIGHT * 0.48, 60, 45, -0.3, 0, Math.PI * 2);
-ctx.stroke();
+// Accent line
+const lineY = H * 0.62
+ctx.beginPath()
+const grad = ctx.createLinearGradient(80, lineY, W - 80, lineY)
+grad.addColorStop(0, 'transparent')
+grad.addColorStop(0.3, 'rgba(200, 149, 108, 0.4)')
+grad.addColorStop(0.5, 'rgba(232, 176, 138, 0.6)')
+grad.addColorStop(0.7, 'rgba(200, 149, 108, 0.4)')
+grad.addColorStop(1, 'transparent')
+ctx.strokeStyle = grad
+ctx.lineWidth = 1
+ctx.moveTo(80, lineY)
+ctx.lineTo(W - 80, lineY)
+ctx.stroke()
 
-// === DECORATIVE: Scatter dots (floating particles) ===
-const rng = (seed) => {
-  let s = seed;
-  return () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
-};
-const rand = rng(42);
+// Eyebrow
+ctx.fillStyle = '#c8956c'
+ctx.font = '12px Helvetica'
+ctx.fillText('LOUISVILLE, KY', 80, 200)
 
-for (let i = 0; i < 40; i++) {
-  const x = rand() * WIDTH;
-  const y = rand() * HEIGHT;
-  const r = rand() * 1.5 + 0.3;
-  const alpha = rand() * 0.4 + 0.1;
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, Math.PI * 2);
-  ctx.fillStyle = `rgba(200, 149, 108, ${alpha})`;
-  ctx.fill();
-}
+// Title
+ctx.fillStyle = '#f5f0eb'
+ctx.font = '72px Georgia'
+ctx.fillText('M. Scott', 80, 290)
 
-// === TOP: Eyebrow label ===
-ctx.fillStyle = '#4a4540';
-ctx.font = '500 11px "Helvetica Neue", Arial, sans-serif';
-ctx.letterSpacing = '3px';
-const eyebrow = 'W E B   D E V E L O P E R   &   C R E A T I V E   T E C H N O L O G I S T';
-ctx.fillText(eyebrow, 72, 200);
+// Tagline
+ctx.fillStyle = '#c8956c'
+ctx.font = 'italic 28px Georgia'
+ctx.fillText('Complexity, untangled.', 80, 340)
 
-// === MAIN: Title ===
-ctx.fillStyle = '#f5f0eb';
-ctx.font = '300 72px Georgia, "Times New Roman", serif';
-ctx.fillText('Crafting digital', 72, 300);
+// Subtitle
+ctx.fillStyle = '#8a8580'
+ctx.font = '16px Helvetica'
+ctx.fillText('Systems, software, proof.', 80, 390)
 
-// === MAIN: Italic accent word ===
-ctx.fillStyle = '#c8956c';
-ctx.font = 'italic 300 72px Georgia, "Times New Roman", serif';
-ctx.fillText('experiences', 72, 385);
+// URL
+ctx.fillStyle = '#4a4540'
+ctx.font = '13px Helvetica'
+ctx.fillText('portfolio-website-one-mu-68.vercel.app', 80, H - 50)
 
-// === SUBTITLE ===
-ctx.fillStyle = '#6a6560';
-ctx.font = '400 16px "Helvetica Neue", Arial, sans-serif';
-ctx.fillText('Building at the intersection of design and engineering', 72, 440);
-
-// === BOTTOM: Accent line ===
-const lineGrad = ctx.createLinearGradient(72, 0, 500, 0);
-lineGrad.addColorStop(0, 'rgba(200, 149, 108, 0.6)');
-lineGrad.addColorStop(0.5, 'rgba(232, 176, 138, 0.8)');
-lineGrad.addColorStop(1, 'rgba(200, 149, 108, 0)');
-ctx.strokeStyle = lineGrad;
-ctx.lineWidth = 1;
-ctx.beginPath();
-ctx.moveTo(72, 470);
-ctx.lineTo(500, 470);
-ctx.stroke();
-
-// === BOTTOM-LEFT: Logo ===
-ctx.fillStyle = '#f5f0eb';
-ctx.font = '400 18px Georgia, "Times New Roman", serif';
-ctx.fillText('Portfolio', 72, HEIGHT - 48);
-ctx.fillStyle = '#c8956c';
-ctx.fillText('.', 72 + ctx.measureText('Portfolio').width, HEIGHT - 48);
-
-// === BOTTOM-RIGHT: URL hint ===
-ctx.fillStyle = '#4a4540';
-ctx.font = '400 12px "Helvetica Neue", Arial, sans-serif';
-const urlText = 'portfolio-website.vercel.app';
-const urlWidth = ctx.measureText(urlText).width;
-ctx.fillText(urlText, WIDTH - 72 - urlWidth, HEIGHT - 48);
-
-// === DECORATIVE: Corner accent marks ===
-ctx.strokeStyle = 'rgba(200, 149, 108, 0.2)';
-ctx.lineWidth = 1;
-
-// Top-right corner mark
-ctx.beginPath();
-ctx.moveTo(WIDTH - 72, 48);
-ctx.lineTo(WIDTH - 72, 68);
-ctx.stroke();
-ctx.beginPath();
-ctx.moveTo(WIDTH - 72, 48);
-ctx.lineTo(WIDTH - 92, 48);
-ctx.stroke();
-
-// Bottom-left corner mark
-ctx.beginPath();
-ctx.moveTo(72, HEIGHT - 28);
-ctx.lineTo(72, HEIGHT - 8);
-ctx.stroke();
-
-// === NOISE GRAIN OVERLAY ===
-const imageData = ctx.getImageData(0, 0, WIDTH, HEIGHT);
-const data = imageData.data;
-const noiseRand = rng(7);
-for (let i = 0; i < data.length; i += 4) {
-  const noise = (noiseRand() - 0.5) * 12;
-  data[i] = Math.min(255, Math.max(0, data[i] + noise));
-  data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + noise));
-  data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + noise));
-}
-ctx.putImageData(imageData, 0, 0);
-
-// === EXPORT ===
-const outPath = path.join(__dirname, '..', 'public', 'og-image.png');
-const buffer = canvas.toBuffer('image/png');
-fs.writeFileSync(outPath, buffer);
-console.log(`OG image generated: ${outPath} (${(buffer.length / 1024).toFixed(1)}KB)`);
+const outPath = path.join(__dirname, '..', 'public', 'og-image.png')
+const buffer = canvas.toBuffer('image/png')
+fs.writeFileSync(outPath, buffer)
+console.log('OG image written to ' + outPath + ' (' + buffer.length + ' bytes)')

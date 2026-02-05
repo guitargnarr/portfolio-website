@@ -59,9 +59,9 @@ function GlowBorder({ delay }: { delay: number }) {
 
 const stats = [
   { value: 60, suffix: '+', label: 'Websites Delivered' },
-  { value: 14, suffix: '', label: 'Industries Served' },
+  { value: 9, suffix: '', label: 'Years Healthcare IT' },
   { text: 'Louisville, KY', label: 'Based' },
-  { text: '2 Weeks', label: 'Average Delivery' },
+  { text: 'Live', label: 'Every Project Deployed' },
 ]
 
 export function SocialProofBar() {
